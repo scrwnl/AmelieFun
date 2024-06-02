@@ -1,10 +1,8 @@
 package io.github.scrwnl.ameliefun;
 
 import org.kohsuke.args4j.*;
-/**
- * Hello world!
- *
- */
+
+
 public class AmelieFunInterpreter
 {
     @Option(name = "--version", aliases = "-v", usage = "Show version")
