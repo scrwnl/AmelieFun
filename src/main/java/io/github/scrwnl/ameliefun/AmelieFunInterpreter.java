@@ -3,6 +3,7 @@ package io.github.scrwnl.ameliefun;
 import org.kohsuke.args4j.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.IOException;
 import java.nio.file.Files;
 
 
@@ -25,7 +26,7 @@ public class AmelieFunInterpreter
         CmdLineParser parser = new CmdLineParser(commandLine);
         try {
             parser.parseArgument(args);
-        } catch (Exception e) {
+        } catch (CmdLineException e) {
             System.out.println("Fatal Error: " + e.getMessage());
             System.exit(1);
         }
@@ -38,16 +39,37 @@ public class AmelieFunInterpreter
             System.exit(0);
         }
         
-        // File existence check
-        Path sourceFile = Paths.get(commandLine.fileName);
-        try {
-            if ( !Files.exists(sourceFile) ) {
-                System.err.println("Fatal Error: No such file or directory");
-                System.exit(1);
-            }
-        } catch (SecurityException e) {
-            System.err.println("Fatal Error: No read permission");
+        // File check
+        Path sourceFilePath = Paths.get(commandLine.fileName);
+        if ( !Files.exists(sourceFilePath) ) {
+            System.err.println("Fatal Error: No such file or directory");
+            System.exit(1);
+        } else if (!Files.isReadable(sourceFilePath)) {
+            System.err.println("Fatal Error: It is not readable.");
+            System.exit(1);
+        } else if (Files.isDirectory(sourceFilePath)) {
+            System.err.println("Fatal Error: It is a directory.");
             System.exit(1);
         }
+
+        try {
+            String code = String.join("", Files.readAllLines(sourceFilePath));
+            runCode(code);
+        } catch (IOException e) {
+            System.err.println("Fatal Error: IO Error");
+            System.exit(1);
+        }
+    }
+    /**
+     * RunnerStatus
+     */
+    public record RunnerStatus(int statusCode, String message) {};
+    static int runCode(String code, String input) {
+        return 0;
+    }
+
+    // Interactive mode
+    static int runCode(String code) {
+        return 0;
     }
 }
